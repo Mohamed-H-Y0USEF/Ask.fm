@@ -1,40 +1,43 @@
 #include "askFmSys.h"
+
 systemAsk::systemAsk() {
     logIN = false;
 }
 void systemAsk::run() {
-    int choice = menu();
-    switch (choice) {
-        case 10:
-            //log in
-            break;
-        case 20:
-            //sign up
-            break;
-        case 1:
-            //print QeusTo Me
-            break;
-        case 2:
-            //print ques From Me
-            break;
-        case 3:
-            // ans quest
-            break;
-        case 4:
-            // del quest
-            break;
-        case 5:
-            // ask quest
-            break;
-        case 6:
-            //list user
-            break;
-        case 7:
-            //feed;
-            break;
-        case 8:
-            //logout
-            break;
+    while (true) {
+        int choice = menu();
+        switch (choice) {
+            case 10:
+                logIn();
+                break;
+            case 20:
+                cout << "sing up" << endl;
+                break;
+            case 1:
+                cout << "print QeusTo Me" << endl;
+                break;
+            case 2:
+                cout << "print ques From Me" << endl;
+                break;
+            case 3:
+                // ans quest
+                break;
+            case 4:
+                // del quest
+                break;
+            case 5:
+                // ask quest
+                break;
+            case 6:
+                //list user
+                break;
+            case 7:
+                //feed;
+                break;
+            case 8:
+                logIN = 0;
+                break;
+        }
     }
 }
 int systemAsk::menu() {
@@ -73,6 +76,52 @@ int systemAsk::menu() {
         }
 
 
+}
+
+void systemAsk::logIn() {
+    string userName , passWord;
+    cout<<"Enter user name & password : ";
+    cin>>userName>>passWord;
+    int cnt = 3;
+    // helper function to validate userName and password from file users
+    while(!valid(userName , passWord)){
+        if(!cnt){
+            cout<<"try again later ... "<<endl<<endl;
+            exit(10);
+        }
+        cout<<"ERROR : invalid user name or password... try again. (have " <<cnt<<" try)"<<endl<<endl;
+        cout<<"Enter user name & password : ";
+        cin>>userName>>passWord;
+        cnt--;
+    }
+    cout<<"Welcome " << userName<<endl;
+    run();
+
+}
+
+bool systemAsk::valid(string userName, string passWord) {
+    ifstream userFile("usersInfo.txt");
+    if(userFile.fail()){
+        cout<<"ERROR can't open file usersInfo"<<endl;
+        exit(10);
+    }
+    string line;
+    while(getline(userFile , line)){
+        string un , pw;
+        ///3ali5momod
+        un = line.substr(1 , line[0] - '0');
+        int pos = (line[0]) - '0' + 1;
+        int len = line[pos] - '0';
+        pw = line.substr(pos+1,len);
+        if(un == userName && passWord == pw){
+            logIN = true;
+            user = userName;
+            userFile.close();
+            return true;
+        }
+    }
+    userFile.close();
+    return false;
 }
 
 
