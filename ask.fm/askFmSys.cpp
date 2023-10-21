@@ -11,7 +11,7 @@ void systemAsk::run() {
                 logIn();
                 break;
             case 20:
-                cout << "sing up" << endl;
+                SignUP();
                 break;
             case 1:
                 cout << "print QeusTo Me" << endl;
@@ -105,23 +105,46 @@ bool systemAsk::valid(string userName, string passWord) {
         cout<<"ERROR can't open file usersInfo"<<endl;
         exit(10);
     }
-    string line;
-    while(getline(userFile , line)){
-        string un , pw;
-        ///3ali5momod
-        un = line.substr(1 , line[0] - '0');
-        int pos = (line[0]) - '0' + 1;
-        int len = line[pos] - '0';
-        pw = line.substr(pos+1,len);
-        if(un == userName && passWord == pw){
+    string name , pass , id;
+    bool status;
+    while(userFile>>name>>pass>>id>>status){
+        if(userName == name && passWord == pass){
             logIN = true;
-            user = userName;
+            user = name;
             userFile.close();
             return true;
         }
     }
     userFile.close();
     return false;
+}
+
+void systemAsk::SignUP() {
+
+    cout<<endl<<endl;
+    string userName , passWord ;
+    bool anonoQues;
+    cout<<"Enter user name. (No spaces):";
+        cin>>userName;
+    cout<<"Enter password : " ;
+        cin>>passWord;
+    cout<<"Allow anonymous questions?: (0 or 1) : ";
+        cin>>anonoQues;
+
+    auto mode = ios::out | ios::app;
+
+    fstream userFile("usersInfo.txt" , mode);
+    if(userFile.fail()){
+        cout<<"ERROR can't open file usersInfo"<<endl;
+        exit(20);
+    }
+    userFile<<endl<<userName<<' ' << passWord<<' ' <<getID()<<' ' << anonoQues;
+    userFile.close();
+}
+
+int systemAsk::getID() {
+    srand(time(0));
+    return rand();
 }
 
 

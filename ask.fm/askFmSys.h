@@ -2,6 +2,8 @@
 #include <fstream>
 #include "question.h"
 #include "user.h"
+#include <cstdlib>
+#include <time.h>
 
 using namespace std;
 struct systemAsk{
@@ -12,4 +14,6 @@ struct systemAsk{
     int menu();
     void logIn();
     bool valid(string , string);
+    void SignUP();
+    int getID();
 };
