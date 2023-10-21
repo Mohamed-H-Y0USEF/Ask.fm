@@ -26,7 +26,7 @@ void systemAsk::run() {
                 // del quest
                 break;
             case 5:
-                // ask quest
+                AskQuestion();
                 break;
             case 6:
                 //list user
@@ -105,12 +105,14 @@ bool systemAsk::valid(string userName, string passWord) {
         cout<<"ERROR can't open file usersInfo"<<endl;
         exit(10);
     }
-    string name , pass , id;
+    string name , pass ;
+    int id;
     bool status;
     while(userFile>>name>>pass>>id>>status){
         if(userName == name && passWord == pass){
             logIN = true;
             user = name;
+            curID = id;
             userFile.close();
             return true;
         }
@@ -138,14 +140,49 @@ void systemAsk::SignUP() {
         cout<<"ERROR can't open file usersInfo"<<endl;
         exit(20);
     }
-    userFile<<endl<<userName<<' ' << passWord<<' ' <<getID()<<' ' << anonoQues;
+    userFile<<userName<<' ' << passWord<<' ' <<getID()<<' ' << anonoQues<<endl;
     userFile.close();
 }
 
 int systemAsk::getID() {
     srand(time(0));
-    return rand();
+    return rand()%1001;
 }
+
+void systemAsk::AskQuestion() {
+    cout<<"Enter id or -1 to cancel : ";
+    int userID;cin>>userID;
+    if(!allowAnonQuest(userID)){
+        cout<<"Note: Anonymous questions are not allowed for this user "<<endl;
+    }
+    cout<<"For thread question: Enter Question id or -1 for new question : ";
+    int type;cin>>type;
+    if(type == -1){
+        string text;
+        cout<<"Enter question test : ";
+        cin.ignore();
+        getline(cin , text);
+
+        fstream questFile("Questions.txt" , ios::out | ios::app);
+        questFile<<curID<<' '<<userID<<' '<< 0 << ' ' << text<<endl;
+        questFile.close();
+    }else{
+        // thead questions
+    }
+}
+
+bool systemAsk::allowAnonQuest(int id) {
+    ifstream users("usersInfo.txt");
+    string name;
+    int pass , userId , isAnon ;
+    while(users>>name>>pass>>userId>>isAnon){
+        if(userId == id)
+            return isAnon;
+    }
+    return false;
+}
+
+
 
 
 

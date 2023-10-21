@@ -9,6 +9,7 @@ using namespace std;
 struct systemAsk{
     bool logIN;
     string user;
+    int curID;
     systemAsk();
     void run();
     int menu();
@@ -16,4 +17,6 @@ struct systemAsk{
     bool valid(string , string);
     void SignUP();
     int getID();
+    void AskQuestion();
+    bool allowAnonQuest(int);
 };
