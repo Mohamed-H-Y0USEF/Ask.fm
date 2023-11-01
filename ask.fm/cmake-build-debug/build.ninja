@@ -61,14 +61,14 @@ build CMakeFiles/ask_fm.dir/askFmSys.cpp.o: CXX_COMPILER__ask_fm_unscanned_Debug
   OBJECT_DIR = CMakeFiles/ask_fm.dir
   OBJECT_FILE_DIR = CMakeFiles/ask_fm.dir
 
-build CMakeFiles/ask_fm.dir/user.cpp.o: CXX_COMPILER__ask_fm_unscanned_Debug /media/mohamed/D-disk/Ask.fm/ask.fm/user.cpp || cmake_object_order_depends_target_ask_fm
-  DEP_FILE = CMakeFiles/ask_fm.dir/user.cpp.o.d
+build CMakeFiles/ask_fm.dir/question.cpp.o: CXX_COMPILER__ask_fm_unscanned_Debug /media/mohamed/D-disk/Ask.fm/ask.fm/question.cpp || cmake_object_order_depends_target_ask_fm
+  DEP_FILE = CMakeFiles/ask_fm.dir/question.cpp.o.d
   FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles/ask_fm.dir
   OBJECT_FILE_DIR = CMakeFiles/ask_fm.dir
 
-build CMakeFiles/ask_fm.dir/question.cpp.o: CXX_COMPILER__ask_fm_unscanned_Debug /media/mohamed/D-disk/Ask.fm/ask.fm/question.cpp || cmake_object_order_depends_target_ask_fm
-  DEP_FILE = CMakeFiles/ask_fm.dir/question.cpp.o.d
+build CMakeFiles/ask_fm.dir/user.cpp.o: CXX_COMPILER__ask_fm_unscanned_Debug /media/mohamed/D-disk/Ask.fm/ask.fm/user.cpp || cmake_object_order_depends_target_ask_fm
+  DEP_FILE = CMakeFiles/ask_fm.dir/user.cpp.o.d
   FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles/ask_fm.dir
   OBJECT_FILE_DIR = CMakeFiles/ask_fm.dir
@@ -81,7 +81,7 @@ build CMakeFiles/ask_fm.dir/question.cpp.o: CXX_COMPILER__ask_fm_unscanned_Debug
 #############################################
 # Link the executable ask_fm
 
-build ask_fm: CXX_EXECUTABLE_LINKER__ask_fm_Debug CMakeFiles/ask_fm.dir/main.cpp.o CMakeFiles/ask_fm.dir/askFmSys.cpp.o CMakeFiles/ask_fm.dir/user.cpp.o CMakeFiles/ask_fm.dir/question.cpp.o
+build ask_fm: CXX_EXECUTABLE_LINKER__ask_fm_Debug CMakeFiles/ask_fm.dir/main.cpp.o CMakeFiles/ask_fm.dir/askFmSys.cpp.o CMakeFiles/ask_fm.dir/question.cpp.o CMakeFiles/ask_fm.dir/user.cpp.o
   FLAGS = -g
   OBJECT_DIR = CMakeFiles/ask_fm.dir
   POST_BUILD = :

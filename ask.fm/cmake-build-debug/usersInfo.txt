@@ -1,4 +1,3 @@
-mohamed 12345 917 1
-mona 12345 153 0
-shahd 123 94 1
-ali 12345 377 0
+881 mohamed 123 1
+460 ali 123 0
+577 mona 123 1

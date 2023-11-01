@@ -1,22 +1,36 @@
-#include <iostream>
-#include <fstream>
-#include "question.h"
 #include "user.h"
-#include <cstdlib>
-#include <time.h>
-
+#include "question.h"
+#include <map>
 using namespace std;
 struct systemAsk{
-    bool logIN;
-    string user;
-    int curID;
+    User curUser;
+    bool logedIn;
+    map<int , User>systemUsers;
+    map<int , Question>questions;
+
     systemAsk();
+
     void run();
     int menu();
+
+
+    void load();
     void logIn();
-    bool valid(string , string);
-    void SignUP();
-    int getID();
-    void AskQuestion();
-    bool allowAnonQuest(int);
+    void singUp();
+
+
+    void askQuestion();
+    void ansQuestion();
+    void printQtoMe();
+    void printQfromMe();
+    void delQuestion();
+    void feed();
+    void listUsers();
+
+
+
+    //helper functions
+    void upDate();
+    static int getID(string , string);
+
 };

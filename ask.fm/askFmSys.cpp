@@ -1,7 +1,12 @@
 #include "askFmSys.h"
+#include <iostream>
+#include <fstream>
+#include <sstream>
+
 
 systemAsk::systemAsk() {
-    logIN = false;
+    logedIn = false;
+    load();
 }
 void systemAsk::run() {
     while (true) {
@@ -11,38 +16,38 @@ void systemAsk::run() {
                 logIn();
                 break;
             case 20:
-                SignUP();
+                singUp();
                 break;
             case 1:
-                cout << "print QeusTo Me" << endl;
+                printQtoMe();
                 break;
             case 2:
-                cout << "print ques From Me" << endl;
+                printQfromMe();
                 break;
             case 3:
-                // ans quest
+               ansQuestion();
                 break;
             case 4:
-                // del quest
+                delQuestion();
                 break;
             case 5:
-                AskQuestion();
+                askQuestion();
                 break;
             case 6:
-                //list user
+                listUsers();
                 break;
             case 7:
-                //feed;
+                feed();
                 break;
             case 8:
-                logIN = 0;
+                logedIn = false;
                 break;
         }
     }
 }
 int systemAsk::menu() {
         int choice = -1;
-        if(!logIN) {
+        if(!logedIn) {
             while (choice != 1 && choice != 2) {
                 cout << "Menu: " << endl;
                 cout << '\t' << "1: Log in ." << endl;
@@ -79,108 +84,214 @@ int systemAsk::menu() {
 }
 
 void systemAsk::logIn() {
-    string userName , passWord;
-    cout<<"Enter user name & password : ";
-    cin>>userName>>passWord;
+    bool found = false;
     int cnt = 3;
-    // helper function to validate userName and password from file users
-    while(!valid(userName , passWord)){
-        if(!cnt){
-            cout<<"try again later ... "<<endl<<endl;
-            exit(10);
+    while(!found && cnt--){
+       cout<<"Enter userName and passWord : ";
+        string Name , pass;cin>>Name>>pass;
+        for(auto it : systemUsers){
+            if(it.second.name == Name && it.second.passWord == pass){
+                logedIn = true;
+                curUser = it.second;
+                found = true;
+                return;
+            }
         }
-        cout<<"ERROR : invalid user name or password... try again. (have " <<cnt<<" try)"<<endl<<endl;
-        cout<<"Enter user name & password : ";
-        cin>>userName>>passWord;
-        cnt--;
+        if(!found) cout<<"ERROR : invlaid pass word or user name... try again "<<endl;
     }
-    cout<<"Welcome " << userName<<endl;
-    run();
-
 }
 
-bool systemAsk::valid(string userName, string passWord) {
-    ifstream userFile("usersInfo.txt");
-    if(userFile.fail()){
-        cout<<"ERROR can't open file usersInfo"<<endl;
-        exit(10);
+int systemAsk::getID(string name , string password) {
+    int x = 0;
+    for(auto it : name) x += it;
+    for(auto it : password ) x+=it;
+    return x;
+}
+
+void systemAsk::upDate() {
+    // run in ans , del , editAns
+    /*
+        ID FromID ToID isAns parentID
+        question Text
+        answer Text
+     */
+    fstream QFile("Questions.txt" , ios::out);
+    if(QFile.fail()){
+        cout<<"ERROR : can't open file questions file"<<endl;
+        exit(0);
     }
-    string name , pass ;
-    int id;
-    bool status;
-    while(userFile>>name>>pass>>id>>status){
-        if(userName == name && passWord == pass){
-            logIN = true;
-            user = name;
-            curID = id;
-            userFile.close();
-            return true;
+    for(auto & it : questions){
+        Question Q = it.second;
+        QFile<<Q.ID<<' ' << Q.FromID << ' ' << Q.toID << ' ' << Q.isAnswred << ' ' << Q.parentID<<endl;
+        QFile<<Q.questionText<<endl;
+        QFile<<Q.answerText<<endl;
+    }
+    QFile.close();
+}
+
+void systemAsk::load() {
+
+    fstream UFile("usersInfo.txt" , ios :: in);
+    if(UFile.fail()){
+        cout<<"ERROR : can't open file users file"<<endl;
+        exit(0);
+    }
+
+    //ID name password allowAnonQuest
+    User temp;
+    while(UFile>>temp.ID>>temp.name>>temp.passWord>>temp.allowAnon){
+        systemUsers[temp.ID] = temp;
+    }
+    UFile.close();
+
+
+
+
+    fstream QFile("Questions.txt" , ios::in);
+    if(QFile.fail()){
+        cout<<"ERROR : can't open file questions file"<<endl;
+        exit(0);
+    }
+    string l1 , l2 , l3;
+    while(getline(QFile , l1) , getline(QFile , l2) , getline(QFile , l3)){
+        Question Q;
+        stringstream iDs (l1);
+        iDs>>Q.ID>>Q.FromID>>Q.toID>>Q.isAnswred>>Q.parentID;
+        Q.questionText = l2;
+        Q.answerText = l3;
+        systemUsers[Q.FromID].questionsFromMe.emplace_back(Q.ID);
+        systemUsers[Q.toID].questionsToMe.emplace_back(Q.ID);
+        if(Q.parentID != -1){
+            questions[Q.parentID].threads.emplace_back(Q.ID);
         }
+        questions[Q.ID] = Q;
+
+
     }
-    userFile.close();
-    return false;
+    QFile.close();
+
 }
 
-void systemAsk::SignUP() {
-
-    cout<<endl<<endl;
-    string userName , passWord ;
-    bool anonoQues;
-    cout<<"Enter user name. (No spaces):";
-        cin>>userName;
-    cout<<"Enter password : " ;
-        cin>>passWord;
-    cout<<"Allow anonymous questions?: (0 or 1) : ";
-        cin>>anonoQues;
-
-    auto mode = ios::out | ios::app;
-
-    fstream userFile("usersInfo.txt" , mode);
-    if(userFile.fail()){
-        cout<<"ERROR can't open file usersInfo"<<endl;
-        exit(20);
+void systemAsk::singUp() {
+    User newUser;
+    newUser.read();
+    systemUsers[newUser.ID] = newUser;
+    fstream UserFile("usersInfo.txt" , ios :: app | ios :: out);
+    if(UserFile.fail()){
+        cout<<"ERROR : can't open file users info "<<endl;
     }
-    userFile<<userName<<' ' << passWord<<' ' <<getID()<<' ' << anonoQues<<endl;
-    userFile.close();
+    UserFile<<newUser.ID<<' ' <<newUser.name<<' '<<newUser.passWord<<' '<<newUser.allowAnon<<endl;
+    UserFile.close();
 }
 
-int systemAsk::getID() {
-    srand(time(0));
-    return rand()%1001;
+void systemAsk::feed() {
+   for(auto [it , Q]: questions){
+        if(Q.parentID == -1)
+           Q.print(questions);
+
+        cout<<"-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*"<<endl;
+   }
 }
 
-void systemAsk::AskQuestion() {
-    cout<<"Enter id or -1 to cancel : ";
-    int userID;cin>>userID;
-    if(!allowAnonQuest(userID)){
-        cout<<"Note: Anonymous questions are not allowed for this user "<<endl;
+void systemAsk::listUsers() {
+    for(auto [id , user] : systemUsers){
+        cout<<"ID : " << id<<'\t'<<user.name<<endl;
     }
-    cout<<"For thread question: Enter Question id or -1 for new question : ";
-    int type;cin>>type;
-    if(type == -1){
-        string text;
-        cout<<"Enter question test : ";
+}
+
+void systemAsk::askQuestion() {
+    cout<<"Enter user ID or -1 to cancel : ";
+    int id;cin>>id;
+
+    if(~id){
+        if(!systemUsers[id].allowAnon){
+            cout<<"Note : Anonymous questions are not allowed for this user ."<<endl;
+        }
+        cout<<"For thread question : Enter question ID or -1 for new question : ";
+        int QID; cin>>QID; //question id for thread question
+        cout<<"Enter Question text : ";
+        string txt;
         cin.ignore();
-        getline(cin , text);
+        getline(cin , txt);
+        Question quest(curUser.ID , id , QID , txt);
 
-        fstream questFile("Questions.txt" , ios::out | ios::app);
-        questFile<<curID<<' '<<userID<<' '<< 0 << ' ' << text<<endl;
-        questFile.close();
-    }else{
-        // thead questions
+        if(QID != -1)
+            questions[QID].threads.emplace_back(quest.ID);
+
+        questions[quest.ID] = quest;
+        systemUsers[curUser.ID].questionsFromMe.push_back(quest.ID);
+        systemUsers[id].questionsToMe.push_back(quest.ID);
+
+
+        fstream QFile("Questions.txt" , ios::out | ios::app);
+        if(QFile.fail()){
+            cout<<"ERROR : can't open file questions file"<<endl;
+            exit(0);
+        }
+            Question Q = quest;
+            QFile<<Q.ID<<' ' << Q.FromID << ' ' << Q.toID << ' ' << Q.isAnswred << ' ' << Q.parentID<<endl;
+            QFile<<Q.questionText<<endl;
+            QFile<<Q.answerText<<endl;
+
+        QFile.close();
     }
 }
 
-bool systemAsk::allowAnonQuest(int id) {
-    ifstream users("usersInfo.txt");
-    string name;
-    int pass , userId , isAnon ;
-    while(users>>name>>pass>>userId>>isAnon){
-        if(userId == id)
-            return isAnon;
+void systemAsk::printQtoMe() {
+    for(auto it : curUser.questionsToMe){
+        Question Q = questions[it];
+        cout<<"Question ID : " << Q.ID <<" from user ID("<<Q.FromID<<")"<<endl;
+        cout<<"Question : " << Q.questionText<<endl;
+        cout<<"Answer : "<<Q.answerText<<endl;
     }
-    return false;
 }
+
+void systemAsk::printQfromMe() {
+    for(auto it : curUser.questionsFromMe){
+        Question Q = questions[it];
+        cout<<"Question ID : " << Q.ID <<" to user ID("<<Q.toID<<")"<<endl;
+        cout<<"Question : " << Q.questionText<<endl;
+        cout<<"Answer : "<<Q.answerText<<endl;
+    }
+}
+
+void systemAsk::ansQuestion() {
+    int questionID;
+    cout<<"Enter Question ID or -1 to cancel : ";
+    cin>>questionID;
+    Question &Q =questions[questionID];
+    Q.print(questions);
+    if(Q.isAnswred)
+        cout<<"Warning : Already answered. Answer will be updated ."<<endl;
+    cin.ignore();
+    string ans;
+    cout<<"Enter Answer : ";
+    getline(cin , ans);
+    Q.answerText = ans;
+    Q.isAnswred = true;
+    upDate();
+}
+
+void systemAsk::delQuestion() {
+    int Qid;
+    cout<<"Enter question ID or -1 to cancel : ";
+    cin>>Qid;
+    if(questions[Qid].FromID != curUser.ID){
+        cout<<"Warning : you can't remove questions not for you"<<endl;
+        return;
+    }
+    for(auto it : questions[Qid].threads){
+        questions.erase(it);
+    }
+    questions.erase(Qid);
+    upDate();
+}
+
+
+
+
+
+
 
 
 
