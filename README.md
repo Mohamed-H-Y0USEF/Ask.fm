@@ -81,7 +81,7 @@ If you are a new user, you can sign up for an account. Choose the "Sign up" opti
 1. Enter `2` in the menu to select the "Sign up" option.
 2. You will be prompted to provide the following information for your new account:
 
-   - **Enter User Name (No Space):** Choose a username for your new account. Ensure that it does not contain spaces.
+   - **Enter User Name (No Space , start without number):** Choose a username for your new account. Ensure that it does not contain spaces.
    - **Enter Password:** Set a password for your account.
    - **Allow Anonymous Questions (0 or 1):** You can choose whether to allow anonymous questions (0 for no, 1 for yes). This option determines if other users can ask you questions without revealing their identity.
 
