@@ -1,4 +1,0 @@
-/snap/clion/250/bin/cmake/linux/x64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/snap/clion/250/bin/ninja/linux/x64/ninja -G Ninja -S /media/mohamed/D-disk/Ask.fm/ask.fm -B /media/mohamed/D-disk/Ask.fm/ask.fm/cmake-build-debug
--- Configuring done (1.0s)
--- Generating done (0.1s)
--- Build files have been written to: /media/mohamed/D-disk/Ask.fm/ask.fm/cmake-build-debug

@@ -1,3 +1,0 @@
-/media/mohamed/D-disk/Ask.fm/ask.fm/cmake-build-debug/CMakeFiles/ask_fm.dir
-/media/mohamed/D-disk/Ask.fm/ask.fm/cmake-build-debug/CMakeFiles/edit_cache.dir
-/media/mohamed/D-disk/Ask.fm/ask.fm/cmake-build-debug/CMakeFiles/rebuild_cache.dir
